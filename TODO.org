@@ -3,7 +3,7 @@ Given a Site is configured
 when the admin-actions are called
 all queries associated with the site are sent to mendable
 and the resulting responses are saved.
-** TODO add a celery worker
+** DONE add a celery worker
 so that we can have celery jobs that run
 ** TODO add API details to the site object
 so that we can have a task that makes Mendable API calls
@@ -16,7 +16,9 @@ and save the result object
 i.e. for the selected query/queries,
 dispatch a mendable API query job.
 This should be an admin action on the QueryAdmin
-** TODO add an admin-action to re-evaluate a site
+** WIP add an admin-action to re-evaluate a site
+there's a stub action now
+--
 i.e. for the selected site/sites
 for each query configured for that site,
 dispatch a mendable API query job.
