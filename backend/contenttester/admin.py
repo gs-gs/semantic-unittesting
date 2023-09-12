@@ -1,13 +1,18 @@
 from django.contrib import admin
-
+from logging import getLogger
 from .models import Assessment, Expectation, Query, Response, Site, Topic
 
+
+logger = getLogger(__name__)
+
+def evaluate_site(modeladmin, request, queryset):
+    for obj in queryset:
+        logger.warn(f"TODO: dispatch the task to evaluate the site {obj}")
 
 class TopicInline(admin.TabularInline):
     model = Topic
     extra = 0
     readonly_fields = ("title",)
-
 
 @admin.register(Site)
 class SiteAdmin(admin.ModelAdmin):
@@ -16,7 +21,7 @@ class SiteAdmin(admin.ModelAdmin):
         "url",
     )
     inlines = [TopicInline]
-
+    actions = [evaluate_site,]
 
 class QueryInline(admin.TabularInline):
     model = Query
