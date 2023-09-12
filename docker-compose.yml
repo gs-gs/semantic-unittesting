@@ -22,6 +22,7 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
+      - CELERY_BROKER_URL=redis://redis:6379/0
     volumes:
       - ./:/app
     restart: on-failure
@@ -42,3 +43,27 @@ services:
   redis:
     image: redis
     stop_signal: sigkill
+
+  celeryworker:
+    <<: *django
+    image: content-tester-django-local_celeryworker
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+      - postgres
+
+    ports: []
+    command: bash -c "watchmedo auto-restart --directory=/app --pattern=*.py --ignore-patterns=*~ --recursive -- celery -A contenttester worker -l INFO"
+
+  celerybeat:
+    <<: *django
+    image: content-tester-django-local_celerybeat
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+      - postgres
+
+    ports: []
+    command: bash -c "watchmedo auto-restart --directory=/app --pattern=*.py --ignore-patterns=*~ --recursive -- celery -A contenttester worker -l INFO"
