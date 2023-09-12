@@ -30,9 +30,14 @@ class AssessmentChoices(models.TextChoices):
 class Response(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     value = models.TextField()
-    assessment = models.CharField(
+    query = models.ForeignKey(Query, on_delete=models.CASCADE)
+
+
+class Assessment(models.Model):
+    value = models.CharField(
         max_length=12,
         choices=AssessmentChoices.choices,
         default=AssessmentChoices.UNSURE,
     )
-    query = models.ForeignKey(Query, on_delete=models.CASCADE)
+    response = models.ForeignKey(Response, on_delete=models.CASCADE)
+    expectation = models.ForeignKey(Expectation, on_delete=models.CASCADE)

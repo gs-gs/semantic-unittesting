@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Site, Topic, Query, Expectation, Response
+
+from .models import Assessment, Expectation, Query, Response, Site, Topic
 
 
 class TopicInline(admin.TabularInline):
@@ -65,6 +66,20 @@ class ResponseAdmin(admin.ModelAdmin):
     list_display = (
         "timestamp",
         "value",
-        "assessment",
         "query_value",
+    )
+
+
+@admin.register(Assessment)
+class AssessmentAdmin(admin.ModelAdmin):
+    def response_value(self, obj):
+        return obj.response.value
+
+    def expectation_value(self, obj):
+        return obj.expectation.title
+
+    list_display = (
+        "value",
+        "response_value",
+        "expectation_value",
     )
