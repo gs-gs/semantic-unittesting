@@ -1,0 +1,46 @@
+* hook the site up to mendable
+Given a Site is configured
+when the admin-actions are called
+all queries associated with the site are sent to mendable
+and the resulting responses are saved.
+** TODO add a celery worker
+so that we can have celery jobs that run
+** TODO add API details to the site object
+so that we can have a task that makes Mendable API calls
+for the site
+** TODO create mendable API query job
+that uses the API details from the site
+to pose a query to Mendable
+and save the result object
+** TODO add an admin-action to query mendable
+i.e. for the selected query/queries,
+dispatch a mendable API query job.
+This should be an admin action on the QueryAdmin
+** TODO add an admin-action to re-evaluate a site
+i.e. for the selected site/sites
+for each query configured for that site,
+dispatch a mendable API query job.
+This should be an admin action on the SiteAdmin
+* get the response evaluators going
+Given a site, query, and expectations are configured
+when the response is saved
+all expectations (of the query, for the response) are evaluated,
+and for each expectation an assessment is saved.
+** TODO Make util function that calls the OpenAI API
+needs a backoff (etc), to stop getting bogged down in 429
+** TODO Make an Assessment of a Response against an Expectation
+this should be a task (let's call it ARE task here)
+that uses an Expectation in a template context
+to render a prompt,
+then use that prompt to evaluate Response.
+The prompt should ask for a clearly recognisable response string
+which can be parsed reliably to create the ternary assessment
+(True/False/Unsure).
+Finally, the task should should save the Assessment.
+*** Idea, maybe Assessments should save the prompt and response too?
+** TODO Make the ARE task run whenver a Response is saved
+Wire the ARE function into the Response using the signals mechanism.
+The signal should call a procedure
+that iterates over all expectations of the query
+associated with a new response.
+For each expectation, dispatch an ARE task.
