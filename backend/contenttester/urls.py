@@ -17,6 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from . import views
+
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("site/<int:site_id>/", views.site, name="site"),
+    path("topic/<int:topic_id>/", views.topic, name="topic"),
+    path("query/<int:query_id>/", views.query, name="query"),
 ]

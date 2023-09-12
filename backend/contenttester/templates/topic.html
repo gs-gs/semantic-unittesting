@@ -1,0 +1,16 @@
+{% extends "site.html" %} {% block site-content %}
+<div>
+  <h2 class="pb-4 font-bold text-lg">{{ topic.title }}</h2>
+  <ul>
+    {% for query in queries %}
+    <li>
+      {% with id=query.id %}
+      <a href="{% url 'query' query_id=id %}" class="hover:underline">
+        <h3>{{ query.value }}</h3>
+      </a>
+      {% endwith %}
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

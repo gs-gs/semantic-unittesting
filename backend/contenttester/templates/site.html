@@ -1,0 +1,9 @@
+{% extends "base.html" %} {% block content %}
+<div class="md:grid grid-cols-[16rem_auto]">
+  <div>{% include 'nav.html' %}</div>
+
+  <main class="p-4">
+    <article>{{ site.title }} {% block site-content %} {% endblock %}</article>
+  </main>
+</div>
+{% endblock %}

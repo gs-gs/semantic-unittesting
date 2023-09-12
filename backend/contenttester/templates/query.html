@@ -1,0 +1,12 @@
+{% extends "site.html" %} {% block site-content %}
+<div>
+  <h2 class="pb-4 font-bold text-lg">{{ query.value }}</h2>
+  <ul>
+    {% for response in responses %}
+    <li>
+      <h3>{{ response.value }}</h3>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}
