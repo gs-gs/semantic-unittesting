@@ -22,6 +22,15 @@ from . import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("site/<int:site_id>/", views.site, name="site"),
-    path("topic/<int:topic_id>/", views.topic, name="topic"),
-    path("query/<int:query_id>/", views.query, name="query"),
+    path("site/<int:site_id>/topic/<int:topic_id>/", views.topic, name="topic"),
+    path(
+        "site/<int:site_id>/topic/<topic_id>/query/<int:query_id>/",
+        views.query,
+        name="query",
+    ),
+    path(
+        "site/<int:site_id>/topic/<topic_id>/query/<int:query_id>/response/<int:response_id>/",
+        views.response,
+        name="response",
+    ),
 ]

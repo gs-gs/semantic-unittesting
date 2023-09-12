@@ -4,8 +4,11 @@
   <ul>
     {% for query in queries %}
     <li>
-      {% with id=query.id %}
-      <a href="{% url 'query' query_id=id %}" class="hover:underline">
+      {% with site_id=site_id topic_id=topic_id query_id=query.id %}
+      <a
+        href="{% url 'query' site_id=site_id topic_id=topic_id query_id=query_id %}"
+        class="hover:underline"
+      >
         <h3>{{ query.value }}</h3>
       </a>
       {% endwith %}

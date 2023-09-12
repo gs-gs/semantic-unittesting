@@ -1,10 +1,17 @@
-{% extends "site.html" %} {% block site-content %}
+{% extends "site.html" %} {% load static %} {% block site-content %}
 <div>
   <h2 class="pb-4 font-bold text-lg">{{ query.value }}</h2>
-  <ul>
+  <ul class="space-y-2">
     {% for response in responses %}
     <li>
-      <h3>{{ response.value }}</h3>
+      {% with site_id=site_id topic_id=topic_id query_id=query.id response_id=response.id %}
+      <a
+        href="{% url 'response' site_id=site_id topic_id=topic_id query_id=query_id response_id=response_id %}"
+        class="hover:underline"
+      >
+        <h3>{{ response.value }}</h3>
+      </a>
+      {% endwith %}
     </li>
     {% endfor %}
   </ul>

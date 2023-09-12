@@ -1,18 +1,16 @@
 <nav class="md:sticky md:top-0 md:h-screen">
   <div class="h-full px-3 py-4 overflow-y-auto bg-blue-100">
     <ul class="space-y-2 font-medium">
-      {% for topic in topics %}
+      {% for topic in topics %} {% with site_id=site_id topic_id=topic.id %}
       <li>
-        {% with id=topic.id %}
         <a
-          href="{% url 'topic' topic_id=id %}"
+          href="{% url 'topic' site_id=site_id topic_id=topic_id %}"
           class="flex items-center p-2 text-gray-900 rounded-lg border border-blue-100 hover:border-blue-300 group"
         >
           {{ topic.title }}
         </a>
-        {% endwith %}
       </li>
-      {% endfor %}
+      {% endwith %} {% endfor %}
     </ul>
   </div>
 </nav>
