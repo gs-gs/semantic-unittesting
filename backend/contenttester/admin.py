@@ -2,7 +2,7 @@ from django.contrib import admin
 from logging import getLogger
 from .models import Assessment, Expectation, Query, Response, Site, Topic
 
-from .util import query_mendable_ai
+from .tasks import assess_response, query_mendable_ai
 
 
 logger = getLogger(__name__)
@@ -14,7 +14,7 @@ def evaluate_site(modeladmin, request, queryset):
         queries = [query for topic in topics for query in topic.query_set.all()]
 
         for query in queries:
-            query_mendable_ai.delay(query.id, query.value)
+            query_mendable_ai.delay(query.id)
 
 
 class TopicInline(admin.TabularInline):
@@ -53,7 +53,7 @@ class TopicAdmin(admin.ModelAdmin):
 
 def execute_query(modeladmin, request, queryset):
     for obj in queryset:
-        query_mendable_ai.delay(obj.id, obj.value)
+        query_mendable_ai.delay(obj.id)
 
 
 @admin.register(Query)
@@ -79,6 +79,12 @@ class ExpectationAdmin(admin.ModelAdmin):
     )
 
 
+def assess_response_against_expectation(modeladmin, request, queryset):
+    for obj in queryset:
+        for expectation in obj.query.expectation_set.all():
+            assess_response.delay(obj.id, expectation.id)
+
+
 @admin.register(Response)
 class ResponseAdmin(admin.ModelAdmin):
     def query_value(self, obj):
@@ -89,6 +95,7 @@ class ResponseAdmin(admin.ModelAdmin):
         "value",
         "query_value",
     )
+    actions = [assess_response_against_expectation]
 
 
 @admin.register(Assessment)
