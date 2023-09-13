@@ -2,17 +2,26 @@ from django.contrib import admin
 from logging import getLogger
 from .models import Assessment, Expectation, Query, Response, Site, Topic
 
+from .util import query_mendable_ai
+
 
 logger = getLogger(__name__)
 
+
 def evaluate_site(modeladmin, request, queryset):
     for obj in queryset:
-        logger.warn(f"TODO: dispatch the task to evaluate the site {obj}")
+        topics = obj.topic_set.all()
+        queries = [query for topic in topics for query in topic.query_set.all()]
+
+        for query in queries:
+            query_mendable_ai.delay(query.id, query.value)
+
 
 class TopicInline(admin.TabularInline):
     model = Topic
     extra = 0
     readonly_fields = ("title",)
+
 
 @admin.register(Site)
 class SiteAdmin(admin.ModelAdmin):
@@ -21,7 +30,8 @@ class SiteAdmin(admin.ModelAdmin):
         "url",
     )
     inlines = [TopicInline]
-    actions = [evaluate_site,]
+    actions = [evaluate_site]
+
 
 class QueryInline(admin.TabularInline):
     model = Query

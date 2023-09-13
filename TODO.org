@@ -16,7 +16,7 @@ and save the result object
 i.e. for the selected query/queries,
 dispatch a mendable API query job.
 This should be an admin action on the QueryAdmin
-** WIP add an admin-action to re-evaluate a site
+** DONE add an admin-action to re-evaluate a site
 there's a stub action now
 --
 i.e. for the selected site/sites
