@@ -57,6 +57,7 @@ class Assessment(models.Model):
     )
     response = models.ForeignKey(Response, on_delete=models.CASCADE)
     expectation = models.ForeignKey(Expectation, on_delete=models.CASCADE)
+    prompt = models.TextField()
     # should we have the actual prompt/input data
     # and the actual response from the LLM
     # as well as the estimated value?
@@ -75,4 +76,3 @@ class Assessment(models.Model):
 
     def __str__(self):
         return self.value
-    
