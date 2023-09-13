@@ -28,9 +28,9 @@ Given a site, query, and expectations are configured
 when the response is saved
 all expectations (of the query, for the response) are evaluated,
 and for each expectation an assessment is saved.
-** TODO Make util function that calls the OpenAI API
+** DONE Make util function that calls the OpenAI API
 needs a backoff (etc), to stop getting bogged down in 429
-** TODO Make an Assessment of a Response against an Expectation
+** DONE Make an Assessment of a Response against an Expectation
 this should be a task (let's call it ARE task here)
 that uses an Expectation in a template context
 to render a prompt,

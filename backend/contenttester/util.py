@@ -3,10 +3,8 @@ import random
 import time
 
 import openai
-from mendable import ChatApp
 
-from .celery import app
-from .models import Response, Query
+from .models import AssessmentChoices
 
 logger = logging.getLogger(__name__)
 
@@ -95,12 +93,9 @@ def openai_chat_completion(
             time.sleep(wait)
 
 
-@app.task(name="query_mendable_ai")
-def query_mendable_ai(query_id, query_value):
-    my_docs_bot = ChatApp()
-
-    res = my_docs_bot.query(query_value)
-    query = Query.objects.get(id=query_id)
-    new_response = Response(value=res, query=query)
-
-    new_response.save()
+def map_bool_to_assessment_choice(input):
+    if input.upper() == "TRUE":
+        return AssessmentChoices.PASS
+    elif input.upper() == "FALSE":
+        return AssessmentChoices.FAIL
+    return AssessmentChoices.UNSURE
