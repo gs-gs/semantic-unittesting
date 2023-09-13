@@ -5,7 +5,7 @@ all queries associated with the site are sent to mendable
 and the resulting responses are saved.
 ** DONE add a celery worker
 so that we can have celery jobs that run
-** TODO add API details to the site object
+** DONE add API details to the site object
 so that we can have a task that makes Mendable API calls
 for the site
 ** DONE create mendable API query job

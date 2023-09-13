@@ -21,7 +21,6 @@ def assess_response(response_id, expectation_id):
 
     prompt = generate_prompt(expectation.value)
     res = openai_chat_completion(prompt, response.value)
-
     assessment_value = map_bool_to_assessment_choice(res)
 
     new_assessment = Assessment(
@@ -30,16 +29,15 @@ def assess_response(response_id, expectation_id):
         expectation=expectation,
         prompt=prompt,
     )
-
     new_assessment.save()
 
 
 @app.task(name="query_mendable_ai")
 def query_mendable_ai(query_id):
-    my_docs_bot = ChatApp()
-
     query = Query.objects.get(id=query_id)
+    api_key = query.topic.site.mendable_api_key
+    my_docs_bot = ChatApp(api_key=api_key)
     res = my_docs_bot.query(query.value)
-    new_response = Response(value=res, query=query)
 
+    new_response = Response(value=res, query=query)
     new_response.save()

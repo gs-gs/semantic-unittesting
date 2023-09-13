@@ -4,6 +4,7 @@ from django.db import models
 class Site(models.Model):
     title = models.CharField(max_length=200)
     url = models.URLField()
+    mendable_api_key = models.CharField(max_length=200)
 
     def __str__(self):
         return self.title
