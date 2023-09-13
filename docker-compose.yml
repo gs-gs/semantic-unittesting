@@ -68,4 +68,4 @@ services:
       - postgres
 
     ports: []
-    command: bash -c "watchmedo auto-restart --directory=/app --pattern=*.py --ignore-patterns=*~ --recursive -- celery -A contenttester worker -l INFO"
+    command: bash -c "watchmedo auto-restart --directory=/app --pattern=*.py --ignore-patterns=*~ --recursive -- celery -A contenttester beat -l INFO"
