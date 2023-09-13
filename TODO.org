@@ -40,7 +40,7 @@ which can be parsed reliably to create the ternary assessment
 (True/False/Unsure).
 Finally, the task should should save the Assessment.
 *** Idea, maybe Assessments should save the prompt and response too?
-** TODO Make the ARE task run whenver a Response is saved
+** DONE Make the ARE task run whenver a Response is saved
 Wire the ARE function into the Response using the signals mechanism.
 The signal should call a procedure
 that iterates over all expectations of the query
