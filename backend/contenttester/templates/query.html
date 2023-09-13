@@ -4,14 +4,19 @@
   <ul class="space-y-2">
     {% for response in responses %}
     <li>
-      {% with site_id=site_id topic_id=topic_id query_id=query.id response_id=response.id %}
-      <a
-        href="{% url 'response' site_id=site_id topic_id=topic_id query_id=query_id response_id=response_id %}"
-        class="hover:underline"
-      >
-        <h3>{{ response.value }}</h3>
-      </a>
-      {% endwith %}
+      <div class="flex gap-2">
+        <p class="shrik-1 italic text-gray-500">
+          {{ response.timestamp|date:"Y/m/d" }}
+        </p>
+        {% with site_id=site_id topic_id=topic_id query_id=query.id response_id=response.id %}
+        <a
+          href="{% url 'response' site_id=site_id topic_id=topic_id query_id=query_id response_id=response_id %}"
+          class="shrink-[4] hover:underline"
+        >
+          <h3>{{ response.value }}</h3>
+        </a>
+        {% endwith %}
+      </div>
     </li>
     {% endfor %}
   </ul>
