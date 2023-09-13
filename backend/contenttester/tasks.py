@@ -6,11 +6,13 @@ from .util import map_bool_to_assessment_choice, openai_chat_completion
 
 
 def generate_prompt(expectation):
-    prompt_template = f"""Your job is to assess whether the provided text meets the following expectation: "{expectation}".
+    prompt_template = f"""Your job is to assess whether the provided text
+    meets the following expectation: "{expectation}".
 
-    Your response should be a one-word answer which is either 'True' (if the expectation was met), 'False' (if it wasn't met) or 
-    'Unsure' (if you're not sure)."""
-
+    Your response should be a one-word answer
+    which is either 'True' (if the expectation was met),
+    'False' (if it wasn't met)
+    or 'Unsure' (if you're not sure)."""
     return prompt_template
 
 
