@@ -51,6 +51,11 @@ class TopicAdmin(admin.ModelAdmin):
     inlines = [QueryInline]
 
 
+def execute_query(modeladmin, request, queryset):
+    for obj in queryset:
+        query_mendable_ai.delay(obj.id, obj.value)
+
+
 @admin.register(Query)
 class QueryAdmin(admin.ModelAdmin):
     def topic_title(self, obj):
@@ -60,6 +65,7 @@ class QueryAdmin(admin.ModelAdmin):
         "value",
         "topic_title",
     )
+    actions = [execute_query]
 
 
 @admin.register(Expectation)

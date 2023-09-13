@@ -12,7 +12,7 @@ for the site
 that uses the API details from the site
 to pose a query to Mendable
 and save the result object
-** TODO add an admin-action to query mendable
+** DONE add an admin-action to query mendable
 i.e. for the selected query/queries,
 dispatch a mendable API query job.
 This should be an admin action on the QueryAdmin
