@@ -49,6 +49,7 @@ services:
     image: content-tester-django-local_celeryworker
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
+      - MENDABLE_API_KEY=${MENDABLE_API_KEY}
     depends_on:
       - redis
       - postgres
@@ -61,6 +62,7 @@ services:
     image: content-tester-django-local_celerybeat
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
+      - MENDABLE_API_KEY=${MENDABLE_API_KEY}
     depends_on:
       - redis
       - postgres

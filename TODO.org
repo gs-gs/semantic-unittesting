@@ -8,7 +8,7 @@ so that we can have celery jobs that run
 ** TODO add API details to the site object
 so that we can have a task that makes Mendable API calls
 for the site
-** TODO create mendable API query job
+** DONE create mendable API query job
 that uses the API details from the site
 to pose a query to Mendable
 and save the result object

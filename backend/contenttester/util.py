@@ -1,18 +1,23 @@
-import openai
-import time
 import logging
 import random
+import time
 
+import openai
+from mendable import ChatApp
+
+from .celery import app
+from .models import Response, Query
 
 logger = logging.getLogger(__name__)
 
 
 def openai_chat_completion(
-        prompt,
-        context_input,
-        model="gpt-4",
-        temperature=0,
-        stop_function=None):
+    prompt,
+    context_input,
+    model="gpt-4",
+    temperature=0,
+    stop_function=None,
+):
     """
     This function is a wrapper around the OpenAI API.
     It provides
@@ -53,18 +58,18 @@ def openai_chat_completion(
                     return done
 
             response = openai.ChatCompletion.create(
-            model="gpt-4",
-            temperature=0,
-            messages=[
-                {
-                    "role": "system",
-                    "content": prompt
-                },
-                {
-                    "role": "user",
-                    "content": context_input
-                }
-            ]
+                model=model,
+                temperature=temperature,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": prompt,
+                    },
+                    {
+                        "role": "user",
+                        "content": context_input,
+                    },
+                ],
             )["choices"][0]["message"]["content"]
             # I wonder what those other choices are...
             # maybe we should try to use them all somehow,
@@ -88,3 +93,14 @@ def openai_chat_completion(
             msg = f"openai.error.RateLimitError: retrying in {wait} seconds"
             logger.warn(msg)
             time.sleep(wait)
+
+
+@app.task(name="query_mendable_ai")
+def query_mendable_ai(query_id, query_value):
+    my_docs_bot = ChatApp()
+
+    res = my_docs_bot.query(query_value)
+    query = Query.objects.get(id=query_id)
+    new_response = Response(value=res, query=query)
+
+    new_response.save()
