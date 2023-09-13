@@ -1,7 +1,6 @@
-from django.http import HttpResponse
 from django.shortcuts import render
 
-from .models import Assessment, Expectation, Query, Response, Site, Topic
+from .models import Assessment, Query, Response, Site, Topic
 
 
 def site(request, site_id):
@@ -48,7 +47,7 @@ def response(request, site_id, topic_id, query_id, response_id):
     for assessment in assessments:
         expectations.append(
             {
-                "value": assessment.expectation.title,
+                "value": assessment.expectation.value,
                 "assessment": assessment.value,
             }
         )

@@ -74,7 +74,7 @@ class ExpectationAdmin(admin.ModelAdmin):
         return obj.query.value
 
     list_display = (
-        "title",
+        "value",
         "query_value",
     )
 
@@ -97,7 +97,7 @@ class AssessmentAdmin(admin.ModelAdmin):
         return obj.response.value
 
     def expectation_value(self, obj):
-        return obj.expectation.title
+        return obj.expectation.value
 
     list_display = (
         "value",

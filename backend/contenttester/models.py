@@ -26,11 +26,11 @@ class Query(models.Model):
 
 
 class Expectation(models.Model):
-    title = models.TextField()  # that's a weird name for it
+    value = models.TextField()
     query = models.ForeignKey(Query, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.title
+        return self.value
 
 
 class AssessmentChoices(models.TextChoices):
