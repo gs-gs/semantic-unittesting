@@ -2,6 +2,7 @@ version: "3"
 
 volumes:
   postgres_data:
+  es-data:
 
 services:
   django: &django
@@ -10,6 +11,7 @@ services:
       dockerfile: ./backend/deploy/Dockerfile
     image: content-tester-django-local
     depends_on:
+      - es
       - postgres
       - redis
     command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8100"
@@ -23,6 +25,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
       - CELERY_BROKER_URL=redis://redis:6379/0
+      - ELASTICSEARCH_URL=http://es:9200/
     volumes:
       - ./:/app
     restart: on-failure
@@ -50,6 +53,7 @@ services:
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ELASTICSEARCH_URL=http://es:9200/
     depends_on:
       - redis
       - postgres
@@ -63,9 +67,42 @@ services:
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ELASTICSEARCH_URL=http://es:9200/
     depends_on:
       - redis
       - postgres
 
     ports: []
     command: bash -c "watchmedo auto-restart --directory=/app --pattern=*.py --ignore-patterns=*~ --recursive -- celery -A contenttester beat -l INFO"
+
+  es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    deploy:
+      resources:
+        limits:
+          memory: 8Gb
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    logging:
+      driver: none
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.10.0
+    environment:
+      ELASTICSEARCH_HOSTS: http://es:9200/
+    depends_on:
+      - es
+    ports:
+      - 5601:5601
+    logging:
+      driver: none
+    stop_signal: sigkill
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]

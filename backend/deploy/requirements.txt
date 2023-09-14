@@ -6,4 +6,4 @@ celery
 watchdog
 openai
 mendable-py
-
+elasticsearch
