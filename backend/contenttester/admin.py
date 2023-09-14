@@ -2,6 +2,7 @@ from django.contrib import admin
 from logging import getLogger
 from .models import Assessment, Expectation, Query, Response, Site, Topic
 
+from .search import SearchClient
 from .tasks import assess_response, query_mendable_ai
 
 
@@ -98,6 +99,20 @@ class ResponseAdmin(admin.ModelAdmin):
     actions = [assess_response_against_expectation]
 
 
+def add_assessment_to_elastic_search(modeladmin, request, queryset):
+    for obj in queryset:
+        data = {
+            "assessment": obj.value,
+            "expectation": obj.expectation.value,
+            "query": obj.response.query.value,
+            "response": obj.response.value,
+            "response_timestamp": obj.response.timestamp,
+            "site": obj.response.query.topic.site.title,
+            "topic": obj.response.query.topic.title,
+        }
+        SearchClient.add_search_document(obj.pk, data)
+
+
 @admin.register(Assessment)
 class AssessmentAdmin(admin.ModelAdmin):
     def response_value(self, obj):
@@ -111,3 +126,4 @@ class AssessmentAdmin(admin.ModelAdmin):
         "response_value",
         "expectation_value",
     )
+    actions = [add_assessment_to_elastic_search]
