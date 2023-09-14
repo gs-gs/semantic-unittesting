@@ -1,7 +1,13 @@
 from mendable import ChatApp
 
 from .celery import app
-from .models import Assessment, Expectation, Response, Query
+from .models import (
+    Assessment,
+    Expectation,
+    Response,
+    Query,
+)
+from .search import INDEX_NAME, SearchClient
 from .util import map_bool_to_assessment_choice, openai_chat_completion
 
 
@@ -43,3 +49,8 @@ def query_mendable_ai(query_id):
 
     new_response = Response(value=res, query=query)
     new_response.save()
+
+
+@app.task(name="add_document_to_index")
+def add_document_to_index(id, document):
+    SearchClient.get_client().index(index=INDEX_NAME, id=id, document=document)
