@@ -7,3 +7,7 @@ watchdog
 openai
 mendable-py
 elasticsearch
+django-markdownify
+djangorestframework
+django-cors-headers
+
