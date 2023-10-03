@@ -106,3 +106,18 @@ services:
     stop_signal: sigkill
     healthcheck:
       test: ["CMD-SHELL", "exit 0"]
+
+  web:
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    image: semantic-unit-testing-nextjs
+    command: yarn dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_ENDPOINT=http://localhost:8100/
+    volumes:
+      - ./:/app
+    restart: on-failure
+    stop_signal: sigkill
