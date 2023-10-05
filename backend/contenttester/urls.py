@@ -34,6 +34,7 @@ urlpatterns = [
         name="response",
     ),
     path("", views.home, name="home"),
+    path("expectation/", views.ExpectationListView.as_view(), name="expectation_list"),
     path("query/<int:pk>/", views.QueryDetailView.as_view(), name="query_detail"),
     path("query/", views.QueryListView.as_view(), name="query_list"),
     path(

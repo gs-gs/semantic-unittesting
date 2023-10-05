@@ -33,9 +33,13 @@ class ResponseBasicSerializer(serializers.ModelSerializer):
 
 
 class ExpectationSerializer(serializers.ModelSerializer):
+    query_id = serializers.PrimaryKeyRelatedField(
+        queryset=Query.objects.all(), source="query", write_only=True
+    )
+
     class Meta:
         model = Expectation
-        fields = ["id", "value"]
+        fields = ["id", "value", "query_id"]
 
 
 class AssessmentSerializer(serializers.ModelSerializer):

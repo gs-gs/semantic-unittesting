@@ -2,13 +2,19 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from rest_framework.generics import ListCreateAPIView, RetrieveDestroyAPIView
 
-from .models import Assessment, Query, Response, Site, Topic
+from .models import Assessment, Expectation, Query, Response, Site, Topic
 from .serializers import (
+    ExpectationSerializer,
     QuerySerializer,
     ResponseSerializer,
     SiteSerializer,
     TopicSerializer,
 )
+
+
+class ExpectationListView(ListCreateAPIView):
+    queryset = Expectation.objects.all()
+    serializer_class = ExpectationSerializer
 
 
 class QueryListView(ListCreateAPIView):
