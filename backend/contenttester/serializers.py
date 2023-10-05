@@ -48,35 +48,48 @@ class AssessmentSerializer(serializers.ModelSerializer):
 
 
 class ResponseSerializer(serializers.ModelSerializer):
-    assessment_set = AssessmentSerializer(many=True)
+    assessments = AssessmentSerializer(
+        source="assessment_set", many=True, required=False
+    )
     query = QueryBasicSerializer()
 
     class Meta:
         model = Response
-        fields = ["id", "value", "timestamp", "query", "assessment_set"]
+        fields = ["id", "value", "timestamp", "query", "assessments"]
 
 
 class QuerySerializer(serializers.ModelSerializer):
-    topic = TopicBasicSerializer()
-    response_set = ResponseSerializer(many=True)
+    topic = TopicBasicSerializer(read_only=True)
+    topic_id = serializers.PrimaryKeyRelatedField(
+        queryset=Topic.objects.all(), source="topic", write_only=True
+    )
+    responses = ResponseSerializer(source="response_set", many=True, required=False)
+    expectations = ExpectationSerializer(
+        source="expectation_set", many=True, required=False
+    )
 
     class Meta:
         model = Query
-        fields = ["id", "value", "topic", "response_set"]
+        fields = ["id", "value", "topic", "topic_id", "responses", "expectations"]
 
 
 class TopicSerializer(serializers.ModelSerializer):
-    site = SiteBasicSerializer()
-    query_set = QuerySerializer(many=True)
+    site = SiteBasicSerializer(read_only=True)
+    site_id = serializers.PrimaryKeyRelatedField(
+        queryset=Site.objects.all(), source="site", write_only=True
+    )
+    title = serializers.CharField(max_length=200)
+    queries = QuerySerializer(source="query_set", many=True, required=False)
 
     class Meta:
         model = Topic
-        fields = ["id", "title", "site", "query_set"]
+        fields = ["id", "title", "site", "site_id", "queries"]
 
 
 class SiteSerializer(serializers.ModelSerializer):
-    topic_set = TopicSerializer(many=True)
+    topics = TopicSerializer(source="topic_set", many=True, required=False)
+    title = serializers.CharField(max_length=200)
 
     class Meta:
         model = Site
-        fields = ["id", "title", "url", "topic_set"]
+        fields = ["id", "title", "url", "topics"]
