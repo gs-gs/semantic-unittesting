@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
 from django.shortcuts import render
+from rest_framework.generics import ListCreateAPIView, RetrieveDestroyAPIView
 
 from .models import Assessment, Query, Response, Site, Topic
 from .serializers import (
@@ -11,42 +11,44 @@ from .serializers import (
 )
 
 
-def sites(request):
-    if request.method == "GET":
-        sites = Site.objects.all()
-        serializer = SiteSerializer(sites, many=True)
-        return JsonResponse(serializer.data, safe=False)
+class QueryListView(ListCreateAPIView):
+    queryset = Query.objects.all()
+    serializer_class = QuerySerializer
 
 
-def site(request, site_id):
-    if request.method == "GET":
-        site = Site.objects.get(id=site_id)
-        serializer = SiteSerializer(site)
-        return JsonResponse(serializer.data, safe=False)
-
-    elif request.method == "POST":
-        return JsonResponse(serializer.data, status=201)
+class QueryDetailView(RetrieveDestroyAPIView):
+    queryset = Query.objects.all()
+    serializer_class = QuerySerializer
 
 
-def topic(request, topic_id):
-    if request.method == "GET":
-        topic = Topic.objects.get(id=topic_id)
-        serializer = TopicSerializer(topic)
-        return JsonResponse(serializer.data, safe=False)
+class ResponseListView(ListCreateAPIView):
+    queryset = Response.objects.all()
+    serializer_class = ResponseSerializer
 
 
-def query(request, query_id):
-    if request.method == "GET":
-        query = Query.objects.get(id=query_id)
-        serializer = QuerySerializer(query)
-        return JsonResponse(serializer.data, safe=False)
+class ResponseDetailView(RetrieveDestroyAPIView):
+    queryset = Response.objects.all()
+    serializer_class = ResponseSerializer
 
 
-def response(request, response_id):
-    if request.method == "GET":
-        response = Response.objects.get(id=response_id)
-        serializer = ResponseSerializer(response)
-        return JsonResponse(serializer.data, safe=False)
+class SiteListView(ListCreateAPIView):
+    queryset = Site.objects.all()
+    serializer_class = SiteSerializer
+
+
+class SiteDetailView(RetrieveDestroyAPIView):
+    queryset = Site.objects.all()
+    serializer_class = SiteSerializer
+
+
+class TopicListView(ListCreateAPIView):
+    queryset = Topic.objects.all()
+    serializer_class = TopicSerializer
+
+
+class TopicDetailView(RetrieveDestroyAPIView):
+    queryset = Topic.objects.all()
+    serializer_class = TopicSerializer
 
 
 @login_required

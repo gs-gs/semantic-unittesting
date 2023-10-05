@@ -34,9 +34,14 @@ urlpatterns = [
         name="response",
     ),
     path("", views.home, name="home"),
-    path("sites/", views.sites),
-    path("site/<int:site_id>", views.site),
-    path("topic/<int:topic_id>", views.topic),
-    path("query/<int:query_id>", views.query),
-    path("response/<int:response_id>", views.response),
+    path("query/<int:pk>/", views.QueryDetailView.as_view(), name="query_detail"),
+    path("query/", views.QueryListView.as_view(), name="query_list"),
+    path(
+        "response/<int:pk>", views.ResponseDetailView.as_view(), name="response_detail"
+    ),
+    path("response/", views.ResponseListView.as_view(), name="response_list"),
+    path("site/<int:pk>", views.SiteDetailView.as_view(), name="site_detail"),
+    path("site/", views.SiteListView.as_view(), name="site_list"),
+    path("topic/<int:pk>/", views.TopicDetailView.as_view(), name="topic_detail"),
+    path("topic/", views.TopicListView.as_view(), name="topic_list"),
 ]
