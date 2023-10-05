@@ -1,5 +1,6 @@
 "use client";
 
+import ButtonLink from "@/components/ButtonLink";
 import { sitesAPI } from "@/services";
 import { useQuery } from "@tanstack/react-query";
 
@@ -11,7 +12,7 @@ type Props = {
 
 const Site = ({ params: { id } }: Props) => {
   const { data: site } = useQuery({
-    queryKey: ["getSite"],
+    queryKey: [`getSite-${id}`],
     queryFn: () => (id ? sitesAPI.getSite(id) : undefined),
   });
 
@@ -21,7 +22,10 @@ const Site = ({ params: { id } }: Props) => {
 
   return (
     <article>
-      <h2 className="font-bold text-lg mb-4">{site.title}</h2>
+      <div className="flex items-start justify-between">
+        <h2 className="font-bold text-lg mb-4">{site.title}</h2>
+        <ButtonLink href={`/site/${site.id}/topic/new`}>Add topic</ButtonLink>
+      </div>
       <a href={site.url} className="hover:underline" target="_blank">
         {site.url}
       </a>

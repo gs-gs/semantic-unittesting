@@ -14,36 +14,52 @@ export type Assessment = {
 export type Query = {
   id: string;
   value: string;
-  topic: Omit<Topic, "query_set">;
-  response_set: Response[];
+  topic: Omit<Topic, "queries">;
+  responses: Response[];
+  expectations: Expectation[];
 };
 
 export type Response = {
   id: string;
   value: string;
   timestamp: string;
-  assessment_set: Assessment[];
-  query: Omit<Query, "response_set">;
+  assessments: Assessment[];
+  query: Omit<Query, "responses">;
 };
 
 export type Site = {
   id: string;
   title: string;
   url: string;
-  topic_set: Topic[];
+  topics: Topic[];
 };
 
 export type Topic = {
   id: string;
   title: string;
-  query_set: Query[];
-  site: Omit<Site, "topic_set">;
+  queries: Query[];
+  site: Omit<Site, "topics">;
 };
 
+export type IGetExpectation = Expectation;
 export type IGetQuery = Query;
 export type IGetResponse = Response;
 export type IGetSite = Site;
 export type IGetTopic = Topic;
+
+export type ICreateExpectation = Omit<Expectation, "id"> & {
+  query_id: string;
+};
+export type ICreateSite = Omit<Site, "id" | "topics">;
+export type ICreateTopic = Omit<Topic, "id" | "queries" | "site"> & {
+  site_id: string;
+};
+export type ICreateQuery = Omit<
+  Query,
+  "id" | "responses" | "expectations" | "topic"
+> & {
+  topic_id: string;
+};
 
 export interface ISitesAPI {
   getQuery(id: string): Promise<IGetQuery>;
@@ -51,5 +67,8 @@ export interface ISitesAPI {
   getSite(id: string): Promise<IGetSite>;
   getSites(): Promise<IGetSite[]>;
   getTopic(id: string): Promise<IGetTopic>;
-  // newConversation(prompt: string, type?: ConversationType): Promise<IGetConversation>;
+  newSite(data: ICreateSite): Promise<IGetSite>;
+  newTopic(data: ICreateTopic): Promise<IGetTopic>;
+  newQuery(data: ICreateQuery): Promise<IGetQuery>;
+  newExpectation(data: ICreateExpectation): Promise<IGetExpectation>;
 }

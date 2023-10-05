@@ -2,26 +2,22 @@
 
 import { useQuery } from "@tanstack/react-query";
 import moment from "moment";
-import Link from "next/link";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import CheckMark from "@/assets/check-mark.svg";
-import { default as Cross, default as QuestionMark } from "@/assets/x.svg";
 import { sitesAPI } from "@/services";
 import Breadcrumbs, { Breadcrumb } from "@/components/Breadcrumbs";
 
 type Props = {
   params: {
-    response_id: string;
+    responseId: string;
   };
 };
 
-const Response = ({ params: { response_id } }: Props) => {
+const Response = ({ params: { responseId } }: Props) => {
   const { data: response } = useQuery({
-    queryKey: ["getResponse"],
-    queryFn: () =>
-      response_id ? sitesAPI.getResponse(response_id) : undefined,
+    queryKey: [`getResponse-${responseId}`],
+    queryFn: () => (responseId ? sitesAPI.getResponse(responseId) : undefined),
   });
 
   if (!response) {
@@ -42,7 +38,7 @@ const Response = ({ params: { response_id } }: Props) => {
       link: `/site/${response.query.topic.site.id}/topic/${response.query.topic.id}/query/${response.query.id}`,
     },
     {
-      label: moment(response.timestamp).format("DD MMMM YYYY HH:mm A"),
+      label: moment(response.timestamp).format("DD MMMM YYYY, HH:mm A"),
     },
   ];
 
@@ -50,7 +46,7 @@ const Response = ({ params: { response_id } }: Props) => {
     <article>
       <Breadcrumbs breadcrumbs={breadcrumbs} />
       <h2 className="pb-4 font-bold text-lg">
-        {moment(response.timestamp).format("DD MMMM YYYY HH:mm A")}
+        {moment(response.timestamp).format("DD MMMM YYYY, HH:mm A")}
       </h2>
       <div className="[&>p>ul]:list-disc [&>p>ol]:list-decimal [&>p>*>li]:ml-8">
         <p className="break-word [&>p>a]:text-blue-500 [&>p>a:hover]:underline">
@@ -70,21 +66,33 @@ const Response = ({ params: { response_id } }: Props) => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {response.assessment_set.map((assessment) => (
+            {response.assessments.map((assessment) => (
               <tr
                 key={assessment.id}
                 className="transition duration-150 ease-in-out"
               >
                 <td className="px-6 py-4">{assessment.expectation.value}</td>
-                <td className="flex gap-2 px-6 py-4 items-center">
-                  {assessment.value}
-                  {assessment.value === "Pass" ? (
-                    <CheckMark width="16px" height="16px" />
+                <td className="flex justify-center gap-2 px-6 py-4 items-center">
+                  <span
+                    className="px-2 rounded-sm"
+                    style={{
+                      backgroundColor:
+                        assessment.value.toLowerCase() === "pass"
+                          ? "#22c55e"
+                          : assessment.value.toLowerCase() === "fail"
+                          ? "#ef4444"
+                          : "#9ca3af",
+                    }}
+                  >
+                    {assessment.value}
+                  </span>
+                  {/* {assessment.value === "Pass" ? (
+                    <SvgCheckMark width="16px" height="16px" />
                   ) : assessment.value === "Fail" ? (
-                    <Cross height="14px" width="14px" />
+                    <SvgCross height="14px" width="14px" />
                   ) : (
-                    <QuestionMark height="16px" width="16px" />
-                  )}
+                    <SvgQuestionMark height="16px" width="16px" />
+                  )} */}
                 </td>
               </tr>
             ))}

@@ -9,9 +9,11 @@ type Props = {
   params: { id: string };
 };
 
+export const GET_SITE_QUERY_KEY = "getSite";
+
 export default function SiteLayout({ children, params: { id } }: Props) {
   const { data: site } = useQuery({
-    queryKey: ["getSite"],
+    queryKey: [GET_SITE_QUERY_KEY],
     queryFn: () => (id ? sitesAPI.getSite(id) : undefined),
   });
 
@@ -21,8 +23,8 @@ export default function SiteLayout({ children, params: { id } }: Props) {
 
   return (
     <div className="md:grid grid-cols-[16rem_auto]">
-      <NavBar topics={site.topic_set} />
-      <div className="p-4">{children}</div>
+      <NavBar topics={site.topics} />
+      <div className="p-4 max-w-[800px]">{children}</div>
     </div>
   );
 }
