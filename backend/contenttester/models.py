@@ -10,6 +10,12 @@ class Site(models.Model):
         return self.title
 
 
+class Job(models.Model):
+    site = models.ForeignKey(Site, on_delete=models.CASCADE)
+    started_on = models.DateTimeField(auto_now_add=True)
+    finished_on = models.DateTimeField(blank=True, null=True)
+
+
 class Topic(models.Model):
     title = models.CharField(max_length=200)
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
@@ -44,6 +50,7 @@ class Response(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     value = models.TextField()
     query = models.ForeignKey(Query, on_delete=models.CASCADE)
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, blank=True, null=True)
     # should we have the prompt actually sent?
 
     def __str__(self):

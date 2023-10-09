@@ -1,6 +1,6 @@
 from django.contrib import admin
 from logging import getLogger
-from .models import Assessment, Expectation, Query, Response, Site, Topic
+from .models import Assessment, Expectation, Job, Query, Response, Site, Topic
 
 from .search import SearchClient
 from .tasks import assess_response, query_mendable_ai
@@ -11,11 +11,13 @@ logger = getLogger(__name__)
 
 def evaluate_site(modeladmin, request, queryset):
     for obj in queryset:
+        job = Job(site=obj)
+        job.save()
         topics = obj.topic_set.all()
         queries = [query for topic in topics for query in topic.query_set.all()]
 
         for query in queries:
-            query_mendable_ai.delay(query.id)
+            query_mendable_ai.delay(query.id, job.id)
 
 
 class TopicInline(admin.TabularInline):
@@ -32,6 +34,15 @@ class SiteAdmin(admin.ModelAdmin):
     )
     inlines = [TopicInline]
     actions = [evaluate_site]
+
+
+@admin.register(Job)
+class JobAdmin(admin.ModelAdmin):
+    list_display = (
+        "site",
+        "started_on",
+        "finished_on",
+    )
 
 
 class QueryInline(admin.TabularInline):
@@ -54,7 +65,9 @@ class TopicAdmin(admin.ModelAdmin):
 
 def execute_query(modeladmin, request, queryset):
     for obj in queryset:
-        query_mendable_ai.delay(obj.id)
+        job = Job(site=obj.topic.site)
+        job.save()
+        query_mendable_ai.delay(obj.id, job.id)
 
 
 @admin.register(Query)

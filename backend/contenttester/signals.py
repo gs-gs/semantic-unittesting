@@ -24,6 +24,7 @@ def dispatch_evaluators(sender, **kwargs):
 def index_document(sender, **kwargs):
     assessment = kwargs["instance"]
     data = {
+        "jobId": assessment.response.job.id,
         "assessment": assessment.value,
         "expectation": assessment.expectation.value,
         "query": assessment.response.query.value,

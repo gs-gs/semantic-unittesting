@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Assessment, Expectation, Query, Response, Site, Topic
+from .models import Assessment, Expectation, Job, Query, Response, Site, Topic
 
 
 class SiteBasicSerializer(serializers.ModelSerializer):
@@ -62,7 +62,17 @@ class ResponseSerializer(serializers.ModelSerializer):
         fields = ["id", "value", "timestamp", "query", "assessments"]
 
 
+class JobSerializer(serializers.ModelSerializer):
+    site = SiteBasicSerializer(read_only=True)
+    responses = ResponseSerializer(source="response_set", many=True, required=False)
+
+    class Meta:
+        model = Job
+        fields = ["id", "started_on", "finished_on", "site", "responses"]
+
+
 class QuerySerializer(serializers.ModelSerializer):
+    job = JobSerializer(read_only=True)
     topic = TopicBasicSerializer(read_only=True)
     topic_id = serializers.PrimaryKeyRelatedField(
         queryset=Topic.objects.all(), source="topic", write_only=True
@@ -74,7 +84,15 @@ class QuerySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Query
-        fields = ["id", "value", "topic", "topic_id", "responses", "expectations"]
+        fields = [
+            "id",
+            "value",
+            "job",
+            "topic",
+            "topic_id",
+            "responses",
+            "expectations",
+        ]
 
 
 class TopicSerializer(serializers.ModelSerializer):
