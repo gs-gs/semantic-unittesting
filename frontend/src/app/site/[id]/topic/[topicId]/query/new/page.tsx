@@ -43,7 +43,10 @@ const NewQuery = ({ params: { id, topicId } }: Props) => {
           />
         </div>
         <div className="mt-8 flex justify-end gap-2">
-          <ButtonLink href="/" colorScheme={ColorScheme.GREY}>
+          <ButtonLink
+            href={`/site/${id}/topic/${topicId}`}
+            colorScheme={ColorScheme.GREY}
+          >
             Cancel
           </ButtonLink>
           <button

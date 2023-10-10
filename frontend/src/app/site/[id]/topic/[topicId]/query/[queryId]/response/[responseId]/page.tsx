@@ -54,25 +54,24 @@ const Response = ({ params: { responseId } }: Props) => {
         </p>
       </div>
       <div className="py-6 flex justify-center">
-        <table>
-          <thead className="bg-gray-100">
+        <table className="w-full">
+          <thead className="bg-gray-200">
             <tr className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="p-2 border-2">
                 Expectation
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="p-2 border-2">
                 Assessment
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody>
             {response.assessments.map((assessment) => (
-              <tr
-                key={assessment.id}
-                className="transition duration-150 ease-in-out"
-              >
-                <td className="px-6 py-4">{assessment.expectation.value}</td>
-                <td className="flex justify-center gap-2 px-6 py-4 items-center">
+              <tr key={assessment.id} className="even:bg-gray-100">
+                <td className="px-6 py-4 p-2 border-2">
+                  {assessment.expectation.value}
+                </td>
+                <td className="p-2 gap-2 border-2 text-center">
                   <span
                     className="px-2 rounded-sm"
                     style={{
@@ -81,18 +80,11 @@ const Response = ({ params: { responseId } }: Props) => {
                           ? "#22c55e"
                           : assessment.value.toLowerCase() === "fail"
                           ? "#ef4444"
-                          : "#9ca3af",
+                          : "#fbbf24",
                     }}
                   >
                     {assessment.value}
                   </span>
-                  {/* {assessment.value === "Pass" ? (
-                    <SvgCheckMark width="16px" height="16px" />
-                  ) : assessment.value === "Fail" ? (
-                    <SvgCross height="14px" width="14px" />
-                  ) : (
-                    <SvgQuestionMark height="16px" width="16px" />
-                  )} */}
                 </td>
               </tr>
             ))}

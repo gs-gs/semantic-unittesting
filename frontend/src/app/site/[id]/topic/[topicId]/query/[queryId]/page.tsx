@@ -154,7 +154,9 @@ const Query = ({ params: { id, topicId, queryId } }: Props) => {
                           }}
                         ></div>
                       </div>
-                      <span className="min-w-[3rem] text-end">{score}%</span>
+                      <span className="min-w-[3rem] text-end">
+                        {Math.round(score)}%
+                      </span>
                     </div>
                   </td>
                 </tr>

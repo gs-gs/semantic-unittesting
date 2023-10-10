@@ -46,7 +46,7 @@ const NewTopic = ({ params: { id } }: Props) => {
           />
         </div>
         <div className="mt-8 flex justify-end gap-2">
-          <ButtonLink href="/" colorScheme={ColorScheme.GREY}>
+          <ButtonLink href={`/site/${id}`} colorScheme={ColorScheme.GREY}>
             Cancel
           </ButtonLink>
           <button
