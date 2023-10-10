@@ -3,6 +3,14 @@ export type Expectation = {
   value: string;
 };
 
+export type Job = {
+  id: string;
+  started_on: string;
+  finished_on: string;
+  site: Omit<Site, "topics">;
+  responses: Response[];
+};
+
 export type Assessment = {
   id: string;
   value: string;
@@ -15,6 +23,7 @@ export type Query = {
   id: string;
   value: string;
   topic: Omit<Topic, "queries">;
+  job: Job;
   responses: Response[];
   expectations: Expectation[];
 };
