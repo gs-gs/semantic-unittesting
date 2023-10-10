@@ -10,4 +10,6 @@ elasticsearch
 django-markdownify
 djangorestframework
 django-cors-headers
-
+channels
+channels-redis
+daphne

@@ -24,7 +24,7 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
-      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379
       - ELASTICSEARCH_URL=http://es:9200/
     volumes:
       - ./:/app
@@ -51,7 +51,7 @@ services:
     <<: *django
     image: content-tester-django-local_celeryworker
     environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - ELASTICSEARCH_URL=http://es:9200/
     depends_on:
@@ -65,7 +65,7 @@ services:
     <<: *django
     image: content-tester-django-local_celerybeat
     environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - ELASTICSEARCH_URL=http://es:9200/
     depends_on:
@@ -117,6 +117,7 @@ services:
       - "3000:3000"
     environment:
       - NEXT_PUBLIC_API_ENDPOINT=http://localhost:8100/
+      - NEXT_PUBLIC_WS_ENDPOINT=ws://localhost:8100
     volumes:
       - ./:/app
     restart: on-failure

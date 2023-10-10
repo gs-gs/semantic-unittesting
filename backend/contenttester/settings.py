@@ -23,6 +23,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
+    "daphne",
     "contenttester",
     "corsheaders",
     "django.contrib.admin",
@@ -116,3 +117,14 @@ except:
     CELERY_BEAT_SCHEDULER = "celery.beat:PersistentScheduler"
 
 CELERY_BEAT_SCHEDULE = {}
+
+ASGI_APPLICATION = "contenttester.asgi.application"
+CHANNEL_HOST = tuple(os.environ["CELERY_BROKER_URL"].split("://")[1].split(":"))
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [CHANNEL_HOST],
+        },
+    },
+}

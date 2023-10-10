@@ -15,8 +15,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 
+from . import consumers
 from . import views
 
 urlpatterns = [
@@ -45,4 +46,15 @@ urlpatterns = [
     path("site/", views.SiteListView.as_view(), name="site_list"),
     path("topic/<int:pk>/", views.TopicDetailView.as_view(), name="topic_detail"),
     path("topic/", views.TopicListView.as_view(), name="topic_list"),
+]
+
+websocket_urlpatterns = [
+    re_path(
+        r"ws/jobs/$",
+        consumers.JobConsumer.as_asgi(),
+    ),
+    re_path(
+        r"ws/jobs/(?P<job_id>\d+)/$",
+        consumers.JobConsumer.as_asgi(),
+    ),
 ]
