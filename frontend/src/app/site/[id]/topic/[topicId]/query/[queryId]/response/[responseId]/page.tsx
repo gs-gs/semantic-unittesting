@@ -48,10 +48,10 @@ const Response = ({ params: { responseId } }: Props) => {
       <h2 className="pb-4 font-bold text-lg">
         {moment(response.timestamp).format("DD MMMM YYYY, HH:mm A")}
       </h2>
-      <div className="[&>p>ul]:list-disc [&>p>ol]:list-decimal [&>p>*>li]:ml-8">
-        <p className="break-word [&>p>a]:text-blue-500 [&>p>a:hover]:underline">
+      <div className="[&>div>ul]:list-disc [&>div>ol]:list-decimal [&>div>*>li]:ml-8">
+        <div className="break-word [&>p>a]:text-blue-500 [&>p>a:hover]:underline">
           <Markdown remarkPlugins={[remarkGfm]}>{response.value}</Markdown>
-        </p>
+        </div>
       </div>
       <div className="py-6 flex justify-center">
         <table className="w-full">

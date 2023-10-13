@@ -5,6 +5,7 @@ import {
   ICreateSite,
   ICreateTopic,
   IGetExpectation,
+  IGetJob,
   IGetQuery,
   IGetResponse,
   IGetSite,
@@ -13,6 +14,11 @@ import {
 } from "./types";
 
 export default class SitesAPI extends API implements ISitesAPI {
+  async getJob(id: string): Promise<IGetJob> {
+    const { data } = await this.instance.get<IGetJob>(`/job/${id}`);
+    return data;
+  }
+
   async getQuery(id: string): Promise<IGetQuery> {
     const { data } = await this.instance.get<IGetQuery>(`/query/${id}`);
     return data;
@@ -70,5 +76,10 @@ export default class SitesAPI extends API implements ISitesAPI {
     );
 
     return query;
+  }
+
+  async evaluateSite(id: string): Promise<IGetJob> {
+    const { data } = await this.instance.get<IGetJob>(`/evaluate-site/${id}`);
+    return data;
   }
 }

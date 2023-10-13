@@ -9,6 +9,8 @@ export type Job = {
   finished_on: string;
   site: Omit<Site, "topics">;
   responses: Response[];
+  numOfAssessments: number;
+  assessments: Assessment[];
 };
 
 export type Assessment = {
@@ -51,6 +53,7 @@ export type Topic = {
 };
 
 export type IGetExpectation = Expectation;
+export type IGetJob = Job;
 export type IGetQuery = Query;
 export type IGetResponse = Response;
 export type IGetSite = Site;
@@ -71,6 +74,7 @@ export type ICreateQuery = Omit<
 };
 
 export interface ISitesAPI {
+  getJob(id: string): Promise<IGetJob>;
   getQuery(id: string): Promise<IGetQuery>;
   getResponse(id: string): Promise<IGetResponse>;
   getSite(id: string): Promise<IGetSite>;
@@ -80,4 +84,5 @@ export interface ISitesAPI {
   newTopic(data: ICreateTopic): Promise<IGetTopic>;
   newQuery(data: ICreateQuery): Promise<IGetQuery>;
   newExpectation(data: ICreateExpectation): Promise<IGetExpectation>;
+  evaluateSite(id: string): Promise<IGetJob>;
 }

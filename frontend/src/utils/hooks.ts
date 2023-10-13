@@ -6,8 +6,6 @@ import useWebSocket, { ReadyState } from "react-use-websocket";
 
 type JobState = {
   jobId: string;
-  // job: Job;
-  responses: Response[];
   assessments: Assessment[];
 };
 
@@ -25,6 +23,12 @@ function isJobCreateEvent(data: unknown): data is JobCreateEvent {
     data.type === "JOB_CREATE"
   );
 }
+
+type JobUpdateEvent = {
+  type: "JOB_UPDATE";
+  id: string;
+  assessments: Assessment[];
+};
 
 type JobFinishEvent = {
   type: "JOB_FINISH";
@@ -44,7 +48,7 @@ function isJobFinishEvent(data: unknown): data is JobFinishEvent {
 type ResponseAddEvent = {
   type: "RESPONSE_ADD";
   id: string;
-  response: Response;
+  assessments: Assessment[];
 };
 
 function isResponseAddEvent(data: unknown): data is ResponseAddEvent {
@@ -72,32 +76,55 @@ function isAssessmentAddEvent(data: unknown): data is AssessmentAddEvent {
 }
 
 type JobCreateAction = JobCreateEvent;
+type JobUpdateAction = JobUpdateEvent;
 type JobFinishAction = JobFinishEvent;
 type ResponseAddAction = ResponseAddEvent;
 type AssessmentAddAction = AssessmentAddEvent;
 
 type ActionTypes =
   | JobCreateAction
+  | JobUpdateAction
   | JobFinishAction
   | ResponseAddAction
   | AssessmentAddAction;
 
-function addResponse(state: JobState, action: ResponseAddAction) {
+function updateJob(state: JobState, action: JobUpdateAction) {
   return {
     ...state,
-    responses: [...state.responses, action.response],
+    jobId: action.id,
+    assessments: action.assessments.sort((a, b) =>
+      String(a.id).localeCompare(String(b.id))
+    ),
+  };
+}
+
+function addResponse(state: JobState, action: ResponseAddAction) {
+  const assessments = [...state.assessments, ...action.assessments].filter(
+    (assessment, index, self) =>
+      index === self.findIndex((a) => a.id === assessment.id)
+  );
+
+  return {
+    ...state,
+    assessments,
   };
 }
 
 function addAssessment(state: JobState, action: AssessmentAddAction) {
   return {
     ...state,
-    assessments: [...state.assessments, action.assessment],
+    assessments: [
+      ...state.assessments.filter((a) => a.id != action.id),
+      action.assessment,
+    ].sort((a, b) => String(a.id).localeCompare(String(b.id))),
   };
 }
 
 function reducer(state: JobState, action: ActionTypes): JobState {
   switch (action.type) {
+    case "JOB_UPDATE": {
+      return updateJob(state, action);
+    }
     case "RESPONSE_ADD": {
       return addResponse(state, action);
     }
@@ -109,18 +136,23 @@ function reducer(state: JobState, action: ActionTypes): JobState {
   }
 }
 
-export function useJobStream({ jobId }: { jobId: string }) {
+export function useJobStream({
+  jobId,
+  initialAssessments,
+}: {
+  jobId: string;
+  initialAssessments: Assessment[];
+}) {
   const [state, dispatchMessages] = useReducer(reducer, {
     jobId,
-    responses: [],
-    assessments: [],
+    assessments: initialAssessments,
   });
   const socketUrl = `${process.env.NEXT_PUBLIC_WS_ENDPOINT}/ws/jobs/${jobId}/`;
 
   const { lastJsonMessage, readyState } = useWebSocket(socketUrl, {
     onOpen: () => console.log("[socket] connected", jobId),
     //Will attempt to reconnect on all close events, such as server shutting down
-    shouldReconnect: (closeEvent) => true,
+    shouldReconnect: () => true,
   });
 
   useEffect(() => {
@@ -140,10 +172,17 @@ export function useJobStream({ jobId }: { jobId: string }) {
     }
   }, [lastJsonMessage]);
 
+  const setAssessments = useCallback(
+    (jobId: string, assessments: Assessment[]) => {
+      dispatchMessages({ type: "JOB_UPDATE", id: jobId, assessments });
+    },
+    []
+  );
+
   return {
     connected: readyState === ReadyState.OPEN,
     jobId: state.jobId,
-    responses: state.responses,
     assessments: state.assessments,
+    setAssessments,
   };
 }
