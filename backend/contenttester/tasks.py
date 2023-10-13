@@ -34,25 +34,22 @@ def assess_response(response_id, expectation_id):
     res = openai_chat_completion(prompt, response.value)
     assessment_value = map_bool_to_assessment_choice(res)
 
-    new_assessment = Assessment(
-        value=assessment_value,
-        response=response,
-        expectation=expectation,
-        prompt=prompt,
-    )
-    new_assessment.save()
+    assessment = Assessment.objects.get(expectation=expectation, response=response)
+    assessment.value = assessment_value
+    assessment.prompt = prompt
+    assessment.save()
 
 
 @app.task(name="query_mendable_ai")
 def query_mendable_ai(query_id, job_id):
     query = Query.objects.get(id=query_id)
-    job = Job.objects.get(id=job_id)
     api_key = query.topic.site.mendable_api_key
     mendable_bot = ChatApp(api_key=api_key)
     wait = None
     retries = 0
     while True:
         try:
+            job = Job.objects.get(id=job_id)
             res = mendable_bot.query(query.value)
             new_response = Response(value=res, query=query, job=job)
             new_response.save()

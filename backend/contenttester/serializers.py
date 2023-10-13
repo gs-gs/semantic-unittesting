@@ -65,10 +65,31 @@ class ResponseSerializer(serializers.ModelSerializer):
 class JobSerializer(serializers.ModelSerializer):
     site = SiteBasicSerializer(read_only=True)
     responses = ResponseSerializer(source="response_set", many=True, required=False)
+    numOfAssessments = serializers.IntegerField(source="num_of_assessments")
 
     class Meta:
         model = Job
-        fields = ["id", "started_on", "finished_on", "site", "responses"]
+        fields = [
+            "id",
+            "started_on",
+            "finished_on",
+            "site",
+            "responses",
+            "numOfAssessments",
+        ]
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        responses = instance.response_set.all()
+        all_assessments = Assessment.objects.all()
+        job_assessments = [
+            a for a in all_assessments if a.response.id in [r.id for r in responses]
+        ]
+        serializer = AssessmentSerializer(job_assessments, many=True)
+
+        representation["assessments"] = serializer.data
+        return representation
 
 
 class QuerySerializer(serializers.ModelSerializer):

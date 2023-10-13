@@ -14,6 +14,7 @@ class Job(models.Model):
     site = models.ForeignKey(Site, on_delete=models.CASCADE)
     started_on = models.DateTimeField(auto_now_add=True)
     finished_on = models.DateTimeField(blank=True, null=True)
+    num_of_assessments = models.IntegerField(default=0)
 
 
 class Topic(models.Model):
@@ -37,7 +38,7 @@ class Expectation(models.Model):
     query = models.ForeignKey(Query, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.value
+        return str(self.id)
 
 
 class AssessmentChoices(models.TextChoices):
@@ -61,11 +62,12 @@ class Assessment(models.Model):
     value = models.CharField(
         max_length=12,
         choices=AssessmentChoices.choices,
-        default=AssessmentChoices.UNSURE,
+        blank=True,
+        null=True,
     )
     response = models.ForeignKey(Response, on_delete=models.CASCADE)
     expectation = models.ForeignKey(Expectation, on_delete=models.CASCADE)
-    prompt = models.TextField()
+    prompt = models.TextField(blank=True, null=True)
     # should we have the actual prompt/input data
     # and the actual response from the LLM
     # as well as the estimated value?
@@ -83,4 +85,4 @@ class Assessment(models.Model):
     # it doesn't matter.
 
     def __str__(self):
-        return self.value
+        return self.value or str(self.pk)

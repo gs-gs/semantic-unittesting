@@ -12,7 +12,9 @@ class JobConsumer(JsonWebsocketConsumer):
             self.job_id = self.scope["url_route"]["kwargs"]["job_id"]
             self.job = Job.objects.get(id=self.job_id)
 
-            async_to_sync(self.channel_layer.group_add)(self.job_id, self.channel_name)
+            async_to_sync(self.channel_layer.group_add)(
+                str(self.job_id), self.channel_name
+            )
         else:
             async_to_sync(self.channel_layer.group_add)("all_jobs", self.channel_name)
 
@@ -48,7 +50,7 @@ class JobConsumer(JsonWebsocketConsumer):
             {
                 "type": "RESPONSE_ADD",
                 "id": event["id"],
-                "response": event["response"],
+                "assessments": event["assessments"],
             }
         )
 
