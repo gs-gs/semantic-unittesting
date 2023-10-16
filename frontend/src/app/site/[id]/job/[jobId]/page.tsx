@@ -73,19 +73,29 @@ const Job = ({ params: { id, jobId } }: Props) => {
         {loading ? "Assessing responses" : "Assessment complete"}
         {loading && <MoonLoader color="gray" size={16} />}
       </div>
-      <div className="pb-2 flex items-center gap-4">
-        <span className="min-w-[4rem]">Passed</span>
-        <span>{`${
-          assessments.filter((a) => a.value && a.value.toLowerCase() === "pass")
-            .length
-        }/${job.numOfAssessments}`}</span>
-      </div>
-      <div className="pb-2 flex items-center gap-4">
-        <span className="min-w-[4rem]">Failed</span>
-        <span>{`${
-          assessments.filter((a) => a.value && a.value.toLowerCase() === "fail")
-            .length
-        }/${job.numOfAssessments}`}</span>
+      <div className="ml-4 font-bold">
+        <div className="pb-2 flex items-center gap-4">
+          <span className="min-w-[8rem]">Total completed</span>
+          <span>{`${assessments.filter((a) => a.value).length}/${
+            job.numOfAssessments
+          }`}</span>
+        </div>
+        <div className="pb-2 flex items-center gap-4 text-[#22c55e]">
+          <span className="min-w-[8rem]">Passed</span>
+          <span>{`${
+            assessments.filter(
+              (a) => a.value && a.value.toLowerCase() === "pass"
+            ).length
+          }/${job.numOfAssessments}`}</span>
+        </div>
+        <div className="pb-2 flex items-center gap-4 text-[#ef4444]">
+          <span className="min-w-[8rem]">Failed</span>
+          <span>{`${
+            assessments.filter(
+              (a) => a.value && a.value.toLowerCase() === "fail"
+            ).length
+          }/${job.numOfAssessments}`}</span>
+        </div>
       </div>
 
       <table className="w-full">
@@ -98,38 +108,46 @@ const Job = ({ params: { id, jobId } }: Props) => {
           </tr>
         </thead>
         <tbody>
-          {assessments.map((a) => (
-            <tr
-              key={a.id}
-              onClick={() => handleTableRowClick(a.response)}
-              className="cursor-pointer even:bg-gray-100 hover:bg-blue-50 transition duration-150 ease-in-out"
-            >
-              <td className="p-2 border-2">{a.response.query.topic.title}</td>
-              <td className="p-2 border-2">{a.response.query.value}</td>
-              <td className="p-2 border-2">{a.expectation.value}</td>
-              <td className="p-2 border-2 gap-2 text-center">
-                {a.value ? (
-                  <span className="flex justify-center">
-                    <div
-                      className="w-4 h-4 rounded-lg"
-                      style={{
-                        backgroundColor:
-                          a.value.toLowerCase() === "pass"
-                            ? "#22c55e"
-                            : a.value.toLowerCase() === "fail"
-                            ? "#ef4444"
-                            : "#fbbf24",
-                      }}
-                    ></div>
-                  </span>
-                ) : (
-                  <span className="flex justify-center">
-                    <BounceLoader color="gray" size={16} />
-                  </span>
-                )}
-              </td>
-            </tr>
-          ))}
+          {assessments
+            .sort(
+              (a, b) =>
+                a.response.query.topic.title.localeCompare(
+                  b.response.query.topic.title
+                ) ||
+                a.response.query.value.localeCompare(b.response.query.value)
+            )
+            .map((a) => (
+              <tr
+                key={a.id}
+                onClick={() => handleTableRowClick(a.response)}
+                className="cursor-pointer even:bg-gray-100 hover:bg-blue-50 transition duration-150 ease-in-out"
+              >
+                <td className="p-2 border-2">{a.response.query.topic.title}</td>
+                <td className="p-2 border-2">{a.response.query.value}</td>
+                <td className="p-2 border-2">{a.expectation.value}</td>
+                <td className="p-2 border-2 gap-2 text-center">
+                  {a.value ? (
+                    <span className="flex justify-center">
+                      <div
+                        className="w-4 h-4 rounded-lg"
+                        style={{
+                          backgroundColor:
+                            a.value.toLowerCase() === "pass"
+                              ? "#22c55e"
+                              : a.value.toLowerCase() === "fail"
+                              ? "#ef4444"
+                              : "#fbbf24",
+                        }}
+                      ></div>
+                    </span>
+                  ) : (
+                    <span className="flex justify-center">
+                      <BounceLoader color="gray" size={16} />
+                    </span>
+                  )}
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </article>
