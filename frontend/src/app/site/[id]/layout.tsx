@@ -24,7 +24,7 @@ export default function SiteLayout({ children, params: { id } }: Props) {
   return (
     <div className="md:grid grid-cols-[16rem_auto]">
       <NavBar topics={site.topics} />
-      <div className="p-4 max-w-[800px]">{children}</div>
+      <div className="p-4">{children}</div>
     </div>
   );
 }

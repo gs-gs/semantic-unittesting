@@ -76,9 +76,9 @@ const Response = ({ params: { responseId } }: Props) => {
                     className="px-2 rounded-sm"
                     style={{
                       backgroundColor:
-                        assessment.value.toLowerCase() === "pass"
+                        assessment.value?.toLowerCase() === "pass"
                           ? "#22c55e"
-                          : assessment.value.toLowerCase() === "fail"
+                          : assessment.value?.toLowerCase() === "fail"
                           ? "#ef4444"
                           : "#fbbf24",
                     }}

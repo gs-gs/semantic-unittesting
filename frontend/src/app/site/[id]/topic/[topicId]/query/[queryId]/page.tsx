@@ -111,7 +111,7 @@ const Query = ({ params: { id, topicId, queryId } }: Props) => {
             .map((response) => {
               const score =
                 (response.assessments.reduce((acc, curr) => {
-                  if (curr.value.toLowerCase() === "pass") {
+                  if (curr.value?.toLowerCase() === "pass") {
                     return acc + 1;
                   }
                   return acc;
@@ -129,8 +129,8 @@ const Query = ({ params: { id, topicId, queryId } }: Props) => {
                     {moment(response.timestamp).format("DD/MM/YYYY, HH:mm A")}
                   </td>
                   <td className="p-2 border-2">
-                    {response.value.substring(0, 50)}
-                    {response.value.length > 50 && "..."}
+                    {response.value.substring(0, 100)}
+                    {response.value.length > 100 && "..."}
                   </td>
                   <td className="p-2 border-2">
                     <div className="flex items-center">

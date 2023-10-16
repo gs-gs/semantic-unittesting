@@ -15,7 +15,7 @@ export type Job = {
 
 export type Assessment = {
   id: string;
-  value: string;
+  value?: string;
   prompt: string;
   expectation: Expectation;
   response: Response;
