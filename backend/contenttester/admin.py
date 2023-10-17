@@ -2,11 +2,25 @@ from django.contrib import admin
 from logging import getLogger
 from .models import Assessment, Expectation, Job, Query, Response, Site, Topic
 
-from .search import SearchClient
-from .tasks import assess_response, query_mendable_ai
-
+from .tasks import add_document_to_index, assess_response, query_mendable_ai
 
 logger = getLogger(__name__)
+
+
+def populate_search_index(modeladmin, request, queryset):
+    for assessment in Assessment.objects.all():
+        document_id = assessment.id
+        data = {
+            "assessment": assessment.value,
+            "expectation": assessment.expectation.value,
+            "query": assessment.response.query.value,
+            "response": assessment.response.value,
+            "response_timestamp": assessment.response.timestamp,
+            "site": assessment.response.query.topic.site.title,
+            "topic": assessment.response.query.topic.title,
+        }
+
+        add_document_to_index(id=document_id, document=data)
 
 
 def evaluate_site(modeladmin, request, queryset):
@@ -33,7 +47,7 @@ class SiteAdmin(admin.ModelAdmin):
         "url",
     )
     inlines = [TopicInline]
-    actions = [evaluate_site]
+    actions = [evaluate_site, populate_search_index]
 
 
 @admin.register(Job)
